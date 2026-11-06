@@ -1,0 +1,12 @@
+# Postgres local para desarrollo del backend (el compose completo es de Diego)
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cityfix
+      POSTGRES_PASSWORD: cityfix
+      POSTGRES_DB: cityfix
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+volumes:
+  pgdata:

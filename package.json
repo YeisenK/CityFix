@@ -1,0 +1,5 @@
+{
+  "name": "cityfix",
+  "private": true,
+  "workspaces": ["shared", "backend"]
+}
