@@ -75,6 +75,10 @@ export const authService = {
     if (stored) await refreshTokenRepo.revokeFamily(stored.familyId); // idempotente
   },
 
+  async cleanupExpiredTokens(): Promise<number> {
+    return refreshTokenRepo.deleteExpired();
+  },
+
   async me(userId: string): Promise<UserDto> {
     const user = await userRepo.findById(userId);
     if (!user) throw AppError.unauthorized();
