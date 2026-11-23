@@ -1,16 +1,14 @@
 import request from 'supertest';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { app } from '../src/app';
 import { prisma } from '../src/lib/prisma';
+import { resetDb } from './helpers';
 
-// Smoke test contra la BD de desarrollo; la BD aislada llega en semana 3.
 const email = `smoke-${Date.now()}@test.local`;
 const password = 'Password123';
 
-afterAll(async () => {
-  await prisma.user.deleteMany({ where: { email } });
-  await prisma.$disconnect();
-});
+beforeAll(resetDb);
+afterAll(() => prisma.$disconnect());
 
 describe('auth smoke', () => {
   let access = '';
