@@ -47,7 +47,7 @@ Variables de entorno (validadas con Zod al arrancar): `DATABASE_URL`, `JWT_ACCES
 | `POST /auth/login` | `{ email, password }` | 200 `{ user, accessToken, refreshToken }` |
 | `POST /auth/refresh` | `{ refreshToken }` | 200 `{ accessToken, refreshToken }` |
 | `POST /auth/logout` | `{ refreshToken }` | 204 (idempotente) |
-| `GET /auth/me` 🔒 | — | 200 `UserDto` |
+| `GET /auth/me` (requiere token) | — | 200 `UserDto` |
 
 `register` y `login` tienen límite de 10 intentos / 15 min por IP.
 
@@ -78,10 +78,10 @@ Variables de entorno (validadas con Zod al arrancar): `DATABASE_URL`, `JWT_ACCES
 |---|---|---|
 | `GET /reports` | público | Filtros: `status`, `categoryId`, `authorId`, `q` (título/descripción), `sortBy` (`createdAt\|updatedAt\|status`), `order` (`asc\|desc`), `page`, `limit` |
 | `GET /reports/:id` | público | |
-| `POST /reports` 🔒 | ciudadano/admin | **multipart/form-data**: `title` (3–120), `description` (10–2000), `categoryId`, `latitude?`, `longitude?`, `image?` |
-| `PUT /reports/:id` 🔒 | dueño o admin | `{ title?, description?, categoryId? }`. El dueño solo mientras esté `PENDING` |
-| `PATCH /reports/:id/status` 🔒 | admin | `{ status }`; registra historial. 400 si ya tiene ese estado |
-| `DELETE /reports/:id` 🔒 | dueño o admin | 204; borra también la imagen |
+| `POST /reports` | ciudadano/admin | **multipart/form-data**: `title` (3–120), `description` (10–2000), `categoryId`, `latitude?`, `longitude?`, `image?` |
+| `PUT /reports/:id` | dueño o admin | `{ title?, description?, categoryId? }`. El dueño solo mientras esté `PENDING` |
+| `PATCH /reports/:id/status` | admin | `{ status }`; registra historial. 400 si ya tiene ese estado |
+| `DELETE /reports/:id` | dueño o admin | 204; borra también la imagen |
 | `GET /reports/:id/history` | público | `[{ id, from, to, changedBy:{id,name}, createdAt }]` (`from` es `null` en la creación) |
 
 **Imagen**: campo `image`, JPEG/PNG/WebP, máx. 5 MB (se valida el contenido real, no solo el MIME). `imageUrl` es una ruta
@@ -101,10 +101,10 @@ curl -X POST http://localhost:3000/api/reports \
 | Ruta | Acceso | Notas |
 |---|---|---|
 | `GET /reports/:id/comments` | público | Paginado, más antiguos primero |
-| `POST /reports/:id/comments` 🔒 | autenticado | `{ content }` (1–1000) → 201 |
-| `DELETE /comments/:id` 🔒 | autor o admin | 204 |
+| `POST /reports/:id/comments` | autenticado | `{ content }` (1–1000) → 201 |
+| `DELETE /comments/:id` | autor o admin | 204 |
 
-🔒 = requiere `Authorization: Bearer`.
+Toda ruta que no esté marcada como pública requiere `Authorization: Bearer <accessToken>`.
 
 ## Estructura
 
